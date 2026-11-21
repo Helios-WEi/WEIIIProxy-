@@ -1,0 +1,632 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEI</title>
+
+<style>
+:root {
+  --bg: #050507;
+  --panel: #0c0c12;
+  --panel-hover: #17141f;
+  --text: #f4f2fa;
+  --muted: #777386;
+  --accent: #a78bfa;
+  --line: #211d2c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, Arial, sans-serif;
+}
+
+/* BACKGROUND */
+
+.background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#24212b 0.8px, transparent 0.8px);
+  background-size: 16px 16px;
+  opacity: .36;
+}
+
+.aurora {
+  position: absolute;
+  bottom: -22%;
+  left: 12%;
+  width: 100%;
+  height: 48%;
+  background:
+    radial-gradient(ellipse at 30% 45%,
+      rgba(114, 80, 196, .75),
+      transparent 60%),
+    radial-gradient(ellipse at 75% 45%,
+      rgba(75, 116, 240, .65),
+      transparent 65%);
+  filter: blur(50px);
+  animation: aurora 12s ease-in-out infinite alternate;
+}
+
+@keyframes aurora {
+  from {
+    transform: translateX(-4%) scale(1);
+  }
+  to {
+    transform: translateX(4%) scale(1.12);
+  }
+}
+
+/* TOP BAR */
+
+.topbar {
+  height: 38px;
+  position: fixed;
+  top: 0;
+  left: 78px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  background: rgba(5,5,7,.8);
+  backdrop-filter: blur(12px);
+  z-index: 5;
+}
+
+.top-search {
+  width: min(420px, 60%);
+  height: 25px;
+  border: 1px solid #26232d;
+  background: #0a0a0e;
+  border-radius: 6px;
+  color: #aaa;
+  padding: 0 10px;
+  outline: none;
+  font-size: 11px;
+  text-align: center;
+}
+
+.top-search:focus {
+  border-color: #62518c;
+}
+
+.account {
+  position: absolute;
+  right: 12px;
+  font-size: 10px;
+  color: #aaa;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 78px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(10,10,14,.95);
+  border-right: 1px solid #22202a;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.shortcuts {
+  padding: 6px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  border-bottom: 1px solid #201d27;
+}
+
+.shortcut {
+  height: 26px;
+  border: 1px solid #211e29;
+  border-radius: 6px;
+  background: #111117;
+  display: grid;
+  place-items: center;
+  color: #a9a2b5;
+  font-size: 12px;
+}
+
+.shortcut:hover {
+  background: #20182e;
+  color: white;
+}
+
+.sidebar-label {
+  padding: 12px 7px 5px;
+  color: #615c6d;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 4px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 25px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #9994a4;
+  cursor: pointer;
+  font-size: 10px;
+  text-align: left;
+  transition: .18s;
+}
+
+.nav-btn:hover {
+  background: #17141f;
+  color: #fff;
+}
+
+.nav-btn.active {
+  background: #eeedf2;
+  color: #16131c;
+}
+
+.nav-icon {
+  width: 15px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 8px 6px;
+  font-size: 8px;
+  color: #635e70;
+}
+
+/* MAIN CONTENT */
+
+main {
+  margin-left: 78px;
+  height: 100vh;
+  padding-top: 38px;
+  position: relative;
+}
+
+.content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 20px;
+  overflow: auto;
+}
+
+.brand {
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  margin-top: 0;
+  margin-bottom: 3px;
+  text-shadow: 0 0 30px rgba(166,139,250,.12);
+}
+
+.subtitle {
+  color: #777386;
+  font-size: 11px;
+  margin-bottom: 55px;
+}
+
+/* MAIN SEARCH */
+
+.search-box {
+  width: min(560px, 90%);
+  height: 53px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: rgba(15,14,20,.8);
+  border: 1px solid #30283c;
+  border-radius: 30px;
+  box-shadow: 0 0 35px rgba(125,90,220,.08);
+  backdrop-filter: blur(12px);
+  transition: .25s;
+}
+
+.search-box:focus-within {
+  border-color: #8265bd;
+  box-shadow: 0 0 30px rgba(139,92,246,.18);
+}
+
+.search-icon {
+  color: #a78bfa;
+  margin-right: 12px;
+  font-size: 16px;
+}
+
+.search-box input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: white;
+  font-size: 13px;
+}
+
+.search-box input::placeholder {
+  color: #777180;
+}
+
+/* CATEGORY BUTTONS */
+
+.categories {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 15px;
+}
+
+.category {
+  padding: 6px 12px;
+  border: 1px solid #2a2535;
+  border-radius: 20px;
+  background: rgba(17,15,22,.8);
+  color: #b5a9cc;
+  font-size: 10px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.category:hover,
+.category.active {
+  background: #211831;
+  border-color: #6d529d;
+  color: #e7dcff;
+}
+
+/* DEMO RESULTS */
+
+.results {
+  width: min(720px, 95%);
+  margin-top: 30px;
+}
+
+.results-heading {
+  color: #777386;
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.card {
+  background: rgba(16,15,21,.82);
+  border: 1px solid #282330;
+  border-radius: 10px;
+  padding: 15px;
+  min-height: 92px;
+  transition: .2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: #514064;
+  background: #15121d;
+}
+
+.card-icon {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.card-title {
+  font-size: 12px;
+  color: #e8e2f3;
+}
+
+.card-desc {
+  font-size: 10px;
+  color: #777386;
+  margin-top: 3px;
+}
+
+.empty {
+  color: #797386;
+  font-size: 12px;
+  padding: 20px;
+  text-align: center;
+  display: none;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+  .sidebar {
+    width: 62px;
+  }
+
+  .topbar {
+    left: 62px;
+  }
+
+  main {
+    margin-left: 62px;
+  }
+
+  .nav-btn {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .nav-btn .label {
+    display: none;
+  }
+
+  .sidebar-label {
+    text-align: center;
+    font-size: 7px;
+  }
+
+  .brand {
+    margin-top: 20px;
+  }
+
+  .subtitle {
+    margin-bottom: 35px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .account {
+    display: none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="background">
+  <div class="dots"></div>
+  <div class="aurora"></div>
+</div>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+  <div class="shortcuts">
+    <button class="shortcut" title="Home">⌂</button>
+    <button class="shortcut" title="Games">🎮</button>
+    <button class="shortcut" title="Music">♫</button>
+    <button class="shortcut" title="Movies">▣</button>
+    <button class="shortcut" title="Apps">✦</button>
+    <button class="shortcut" title="More">＋</button>
+  </div>
+
+  <div class="sidebar-label">Navigation</div>
+
+  <nav class="nav">
+    <button class="nav-btn active" data-section="Home">
+      <span class="nav-icon">⌂</span><span class="label">Home</span>
+    </button>
+
+    <button class="nav-btn" data-section="Games">
+      <span class="nav-icon">🎮</span><span class="label">Games</span>
+    </button>
+
+    <button class="nav-btn" data-section="Music">
+      <span class="nav-icon">♫</span><span class="label">Music</span>
+    </button>
+
+    <button class="nav-btn" data-section="Movies">
+      <span class="nav-icon">▣</span><span class="label">Movies</span>
+    </button>
+
+    <button class="nav-btn" data-section="Apps">
+      <span class="nav-icon">✦</span><span class="label">Apps</span>
+    </button>
+
+    <button class="nav-btn" data-section="Chat">
+      <span class="nav-icon">◉</span><span class="label">Chat</span>
+    </button>
+
+    <button class="nav-btn" data-section="Settings">
+      <span class="nav-icon">⚙</span><span class="label">Settings</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">WEI • Midnight UI</div>
+</aside>
+
+<!-- TOP BAR -->
+
+<header class="topbar">
+  <input class="top-search" placeholder="Search or select a section" id="topSearch">
+  <div class="account">Sign in</div>
+</header>
+
+<!-- MAIN -->
+
+<main>
+  <section class="content">
+
+    <h1 class="brand">WEI</h1>
+    <div class="subtitle">Explore beyond the ordinary.</div>
+
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input id="searchInput" placeholder="Search the demo..." autocomplete="off">
+    </div>
+
+    <div class="categories">
+      <button class="category active" data-filter="All">All</button>
+      <button class="category" data-filter="Games">Games</button>
+      <button class="category" data-filter="Music">Music</button>
+      <button class="category" data-filter="Movies">Movies</button>
+      <button class="category" data-filter="Apps">Apps</button>
+    </div>
+
+    <div class="results">
+      <div class="results-heading" id="sectionHeading">Explore</div>
+
+      <div class="cards" id="cards">
+
+        <div class="card" data-category="Games">
+          <div class="card-icon">🎮</div>
+          <div class="card-title">Games</div>
+          <div class="card-desc">Game library demo card</div>
+        </div>
+
+        <div class="card" data-category="Music">
+          <div class="card-icon">♫</div>
+          <div class="card-title">Music</div>
+          <div class="card-desc">Music section demo card</div>
+        </div>
+
+        <div class="card" data-category="Movies">
+          <div class="card-icon">🎬</div>
+          <div class="card-title">Movies</div>
+          <div class="card-desc">Movie section demo card</div>
+        </div>
+
+        <div class="card" data-category="Apps">
+          <div class="card-icon">✦</div>
+          <div class="card-title">Apps</div>
+          <div class="card-desc">Apps section demo card</div>
+        </div>
+
+        <div class="card" data-category="Chat">
+          <div class="card-icon">💬</div>
+          <div class="card-title">Chat</div>
+          <div class="card-desc">Chat section demo card</div>
+        </div>
+
+        <div class="card" data-category="Settings">
+          <div class="card-icon">⚙</div>
+          <div class="card-title">Settings</div>
+          <div class="card-desc">Settings section demo card</div>
+        </div>
+
+      </div>
+
+      <div class="empty" id="empty">No demo items found.</div>
+    </div>
+
+  </section>
+</main>
+
+<script>
+const navButtons = document.querySelectorAll(".nav-btn");
+const categoryButtons = document.querySelectorAll(".category");
+const cards = document.querySelectorAll(".card");
+const searchInput = document.getElementById("searchInput");
+const topSearch = document.getElementById("topSearch");
+const sectionHeading = document.getElementById("sectionHeading");
+const empty = document.getElementById("empty");
+
+let selectedSection = "Home";
+let selectedFilter = "All";
+
+function filterCards() {
+  const query = searchInput.value.toLowerCase().trim();
+  let visible = 0;
+
+  cards.forEach(card => {
+    const category = card.dataset.category;
+    const matchesCategory =
+      selectedFilter === "All" || category === selectedFilter;
+
+    const matchesSection =
+      selectedSection === "Home" ||
+      selectedSection === category ||
+      selectedSection === "Settings" ||
+      selectedSection === "Chat";
+
+    const matchesSearch =
+      card.innerText.toLowerCase().includes(query);
+
+    const show = matchesCategory && matchesSection && matchesSearch;
+
+    card.style.display = show ? "" : "none";
+
+    if (show) visible++;
+  });
+
+  empty.style.display = visible ? "none" : "block";
+}
+
+navButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    navButtons.forEach(b => b.classList.remove("active"));
+    button.classList.add("active");
+
+    selectedSection = button.dataset.section;
+    selectedFilter = "All";
+
+    categoryButtons.forEach(b => b.classList.remove("active"));
+    categoryButtons[0].classList.add("active");
+
+    sectionHeading.textContent =
+      selectedSection === "Home" ? "Explore" : selectedSection;
+
+    searchInput.value = "";
+    filterCards();
+  });
+});
+
+categoryButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    categoryButtons.forEach(b => b.classList.remove("active"));
+    button.classList.add("active");
+
+    selectedFilter = button.dataset.filter;
+    filterCards();
+  });
+});
+
+searchInput.addEventListener("input", filterCards);
+
+topSearch.addEventListener("input", () => {
+  searchInput.value = topSearch.value;
+  filterCards();
+});
+
+filterCards();
+</script>
+
+</body>
+</html>
